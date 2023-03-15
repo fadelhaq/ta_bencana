@@ -16,6 +16,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,9 +50,13 @@ public class  report extends AppCompatActivity implements LocationListener {
 
     private Button getfoto, btlocation, bsend;
     private ImageView hasilfoto;
-    private EditText iNama, iJenis, iLaporan;
+    private EditText iNama, iLaporan;
     private TextView textView_location;
     LocationManager locationManager;
+
+    String[] item = {"Kebakaran","Banjir","Angin puting beliung","Tanah longsor","Kebakaran hutan dan lahan","Abrasi","Gempa bumi","Gunung meletus"};
+    AutoCompleteTextView autoCompleteTextView;
+    ArrayAdapter<String> adapterItems;
 
 
     @SuppressLint("MissingInflatedId")
@@ -62,13 +69,20 @@ public class  report extends AppCompatActivity implements LocationListener {
         hasilfoto = findViewById(R.id.hasil_foto);
 
         iNama = findViewById(R.id.inputNama);
-        iJenis = findViewById(R.id.inputJenis);
+
+        autoCompleteTextView = findViewById(R.id.inputJenis);
+        adapterItems = new ArrayAdapter<String>(this, R.layout.list_item, item);
+        autoCompleteTextView.setAdapter(adapterItems);
+
+
         iLaporan = findViewById(R.id.inputLaporan);
 
         textView_location = findViewById(R.id.text_location);
         btlocation = findViewById(R.id.btn_location);
 
         bsend = findViewById(R.id.btn_send);
+
+
 
 
         if (ContextCompat.checkSelfPermission(report.this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -83,7 +97,14 @@ public class  report extends AppCompatActivity implements LocationListener {
                 saveUser(createRequest());
             }
         });
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String item = adapterView.getItemAtPosition(position).toString();
+                Toast.makeText(report.this, "Item" + item, Toast.LENGTH_SHORT).show();
 
+            }
+        });
 
         btlocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +175,6 @@ public class  report extends AppCompatActivity implements LocationListener {
     public UserRequest createRequest() {
         UserRequest userRequest = new UserRequest();
         userRequest.setiNama(iNama.getText().toString());
-        userRequest.setiJenis(iJenis.getText().toString());
         userRequest.setiLaporan(iLaporan.getText().toString());
         userRequest.setTextView_location(textView_location.getText().toString());
 
